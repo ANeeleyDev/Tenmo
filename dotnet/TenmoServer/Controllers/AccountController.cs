@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TenmoServer.DAO;
+using TenmoServer.Models;
 using TenmoServer.Security;
 
 namespace TenmoServer.Controllers
@@ -16,7 +17,14 @@ namespace TenmoServer.Controllers
         private readonly ITokenGenerator tokenGenerator;
         private readonly IAccountDao accountDao;
 
-        [HttpGet("")]
+        [HttpGet("/balance")]
+        public decimal GetBalance(int accountId)
+        {
+            string accountIdString = User.FindFirst("account_id")?.Value;
+            accountId = Convert.ToInt32(accountIdString);
+
+            return accountDao.GetBalance(accountId);
+        }
 
 
 
