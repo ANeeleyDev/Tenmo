@@ -8,7 +8,7 @@ namespace TenmoClient
     {
         private static readonly ConsoleService consoleService = new ConsoleService();
         private static readonly AuthService authService = new AuthService();
-        private static readonly APIService apiService = new APIService("http://localhost:53041/");
+        private static readonly APIService apiService = new APIService("https://localhost:44315/");
 
         static void Main(string[] args)
         {

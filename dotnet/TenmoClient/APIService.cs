@@ -1,4 +1,5 @@
 ﻿using RestSharp;
+using RestSharp.Authenticators;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,30 +10,26 @@ namespace TenmoClient
     public class APIService
     {
         private readonly string API_URL = "";
-        private readonly RestClient client = new RestClient();
+        private readonly RestClient client;
         private ApiUser user = new ApiUser();
-
-        //WTF IS THIS EVEN DOING?
-        //Maybe checking to see if a user is logged or not? IDK MAN
-        public bool LoggedIn { get { return !string.IsNullOrWhiteSpace(user.Token); } }
-
 
         public decimal GetBalance(int userId)
         {
+            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
             RestRequest request = new RestRequest(API_URL + "account/balance");
-            IRestResponse<Account> response = client.Get<Account>(request);
+            IRestResponse<decimal> response = client.Get<decimal>(request);
 
             if (response.ResponseStatus != ResponseStatus.Completed)
             {
-                throw new Exception($"Error unable to reach server {response.ErrorException}");
+                throw new Exception("Error occurred - unable to reach server.", response.ErrorException);
             }
             else if (!response.IsSuccessful)
             {
-                throw new Exception($"Error occured - received non-success response: " + (int)response.StatusCode);
+                throw new Exception("Error occurred - received non-success response: $" + (int)response.StatusCode);
             }
             else
             {
-                return response.Data.Balance;
+                return response.Data;
             }
         }
 
@@ -41,6 +38,7 @@ namespace TenmoClient
         public APIService(string api_url)
         {
             API_URL = api_url;
+            client = new RestClient(); 
         }
     }
     //DANGER ZONE

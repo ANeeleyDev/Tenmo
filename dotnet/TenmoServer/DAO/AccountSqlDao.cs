@@ -16,7 +16,7 @@ namespace TenmoServer.DAO
             connectionString = dbConnectionString;
         }
 
-        public Account GetBalance(int userId)
+        public decimal GetBalance(int userId)
         {
             Account returnAcc = null;
 
@@ -48,7 +48,7 @@ namespace TenmoServer.DAO
                 Console.WriteLine(theseHands.Message);
             }
 
-            return returnAcc;
+            return returnAcc.Balance;
 
         }
 
