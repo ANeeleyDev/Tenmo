@@ -17,14 +17,18 @@ namespace TenmoClient
         public bool LoggedIn { get { return !string.IsNullOrWhiteSpace(user.Token); } }
 
 
-        public decimal GetBalance(int accountId)
+        public decimal GetBalance(int userId)
         {
-            RestRequest request = new RestRequest(API_URL + "balance");
+            RestRequest request = new RestRequest(API_URL + "account/balance");
             IRestResponse<Account> response = client.Get<Account>(request);
 
-            if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+            if (response.ResponseStatus != ResponseStatus.Completed)
             {
                 throw new Exception($"Error unable to reach server {response.ErrorException}");
+            }
+            else if (!response.IsSuccessful)
+            {
+                throw new Exception($"Error occured - received non-success response: " + (int)response.StatusCode);
             }
             else
             {

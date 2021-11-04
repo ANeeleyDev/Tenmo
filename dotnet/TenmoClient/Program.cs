@@ -92,11 +92,9 @@ namespace TenmoClient
                 else if (menuSelection == 1)
                 {
                     Console.WriteLine();
-                    int accountId = 
-                    string token = UserService.GetToken();
-                    string accountIdString = token
-                    apiService.GetBalance();
-
+                    int userId = UserService.GetUserId();
+                    decimal userBalance = apiService.GetBalance(userId);
+                    Console.WriteLine($"Your current balance is: {userBalance}");
                 }
                 else if (menuSelection == 2)
                 {

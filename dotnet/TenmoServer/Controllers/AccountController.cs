@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +12,21 @@ namespace TenmoServer.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class AccountController : ControllerBase
     {
         //Properties
-        private readonly ITokenGenerator tokenGenerator;
         private readonly IAccountDao accountDao;
 
-        [HttpGet("/balance")]
-        public decimal GetBalance(int accountId)
+        [HttpGet("balance")]
+        public decimal GetBalance(int userId)
         {
-            string accountIdString = User.FindFirst("account_id")?.Value;
-            accountId = Convert.ToInt32(accountIdString);
+            string userIdString = User.FindFirst("sub")?.Value;
+            userId = Convert.ToInt32(userIdString);
 
-            return accountDao.GetBalance(accountId);
+            Account returnAcc = new Account();
+            returnAcc = accountDao.GetBalance(userId);
+            return returnAcc.Balance;
         }
 
 
@@ -31,9 +34,8 @@ namespace TenmoServer.Controllers
 
 
         //CTOR
-        public AccountController(ITokenGenerator _tokenGenerator, IAccountDao _accountDao)
+        public AccountController(IAccountDao _accountDao)
         {
-            tokenGenerator = _tokenGenerator;
             accountDao = _accountDao;
         }
 
