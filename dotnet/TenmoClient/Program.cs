@@ -17,7 +17,7 @@ namespace TenmoClient
 
         private static void Run()
         {
-            while(true)
+            while (true)
             {
                 int loginRegister = -1;
                 while (loginRegister != 1 && loginRegister != 2)
@@ -106,6 +106,33 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 4)
                 {
+                    Console.WriteLine();
+                    IList<User> usersList = apiService.GetUsers();
+
+                    Console.WriteLine("--------------------------------");
+                    Console.WriteLine("Users");
+                    Console.WriteLine("ID        Name");
+                    Console.WriteLine("--------------------------------");
+
+                    foreach (User user in usersList)
+                    {
+                        Console.WriteLine($"{user.UserId}      {user.Username}");
+                    }
+                    Console.WriteLine("----------");
+                    Console.WriteLine();
+                    Console.WriteLine("Enter ID of user you are sending (0 to cancel):");
+
+                    string usersChoiceString = Console.ReadLine();
+                    int usersChoiceInt = int.Parse(usersChoiceString);
+
+                    foreach (User user1 in usersList)
+                    {
+                        if (user1.UserId == usersChoiceInt)
+                        {
+                            Console.WriteLine("Enter amount:");
+                            //do whatever
+                        }
+                    }
 
                 }
                 else if (menuSelection == 5)

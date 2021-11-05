@@ -16,6 +16,7 @@ namespace TenmoServer.DAO
             connectionString = dbConnectionString;
         }
 
+        //Method Case 1
         public IList<User> getUsers()
         {
             IList<User> listOfUsers = new List<User>();
@@ -36,6 +37,38 @@ namespace TenmoServer.DAO
             }
 
             return listOfUsers;
+        }
+
+        public void Transaction(int fromUserId, int toUserId, decimal amount)
+        {
+            try
+            {
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string sql = "Begin Transaction; " +
+                             "UPDATE accounts " +
+                             "SET balance = balance - @amount " +
+                             "WHERE user_id = @fromUserId; " +
+
+                             "UPDATE accounts " +
+                             "SET balance = balance + @amount " +
+                             "WHERE user_id = @toUserId; " +
+                             "COMMIT;";
+                SqlCommand cmd = new SqlCommand(sql, conn);
+
+                cmd.Parameters.AddWithValue("@fromUserId", fromUserId);
+                cmd.Parameters.AddWithValue("@toUserId", toUserId);
+                cmd.Parameters.AddWithValue("@amount", amount);
+            }
+
+            }
+            catch (Exception theseHands)
+            {
+
+                Console.WriteLine(theseHands.Message);
+            }
         }
 
         public User GetUserFromReader(SqlDataReader reader)

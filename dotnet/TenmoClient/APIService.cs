@@ -33,12 +33,33 @@ namespace TenmoClient
             }
         }
 
-      
+        //Method Case 1
+        public IList<User> GetUsers()
+        {
+            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
+            RestRequest request = new RestRequest(API_URL + "transfer/users");
+            IRestResponse<IList<User>> response = client.Get<IList<User>>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                throw new Exception("Error occurred - unable to reach server.", response.ErrorException);
+            }
+            else if (!response.IsSuccessful)
+            {
+                throw new Exception("Error occurred - received non-success response: $" + (int)response.StatusCode);
+            }
+            else
+            {
+                return response.Data;
+            }
+        }
+
+
         //CTOR
         public APIService(string api_url)
         {
             API_URL = api_url;
-            client = new RestClient(); 
+            client = new RestClient();
         }
     }
     //DANGER ZONE
