@@ -39,7 +39,11 @@ namespace TenmoServer.Controllers
             return Ok();
         }
 
-
+        //[HttpPost("sendMoney")]
+        //public ActionResult CreateTransactionReceipt(Transfer transfer)
+        //{
+        //    transferDao.createTransferReceipt(transfer);
+        //}
 
         //CTOR
         public TransferController(ITransferDao _transferDao)

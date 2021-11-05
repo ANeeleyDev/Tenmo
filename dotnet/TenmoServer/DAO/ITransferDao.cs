@@ -13,5 +13,8 @@ namespace TenmoServer.DAO
 
         //Method case 2
         public void Transaction(int fromUserId, int toUserId, decimal amount);
+
+        //poppulating the transfer table
+        public Transfer createTransferReceipt(Transfer transfer);
     }
 }
