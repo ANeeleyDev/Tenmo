@@ -86,8 +86,8 @@ namespace TenmoServer.DAO
                     SqlCommand cmd = new SqlCommand(sql, conn);
                    
                     cmd.Parameters.AddWithValue("@transfer_status_id", transfer.TransferStatusId);
-                    cmd.Parameters.AddWithValue("transfer_type_id", transfer.TransferTypeId);
-                    cmd.Parameters.AddWithValue(" @account_from", transfer.AccountFrom);
+                    cmd.Parameters.AddWithValue("@transfer_type_id", transfer.TransferTypeId);
+                    cmd.Parameters.AddWithValue("@account_from", transfer.AccountFrom);
                     cmd.Parameters.AddWithValue("@account_to", transfer.AccountTo);
                     cmd.Parameters.AddWithValue("@amount", transfer.Amount);
 
