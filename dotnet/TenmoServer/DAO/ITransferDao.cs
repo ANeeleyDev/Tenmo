@@ -12,9 +12,10 @@ namespace TenmoServer.DAO
         public IList<User> getUsers();
 
         //Method case 2
-        public void Transaction(int fromUserId, int toUserId, decimal amount);
+        public bool transfer(int fromUserId, int toUserId, decimal amount);
+        //getAccountId allows us to populate the transfer table with the account id
 
-        //poppulating the transfer table
-        public Transfer createTransferReceipt(Transfer transfer);
+        //populating the transfer table
+        public TransferRequest createTransferReceipt(TransferRequest transferRequest);
     }
 }

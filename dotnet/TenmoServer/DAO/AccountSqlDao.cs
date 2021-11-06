@@ -16,7 +16,18 @@ namespace TenmoServer.DAO
             connectionString = dbConnectionString;
         }
 
-        public decimal GetBalance(int userId)
+        public Account GetAccountFromReader(SqlDataReader reader)
+        {
+            Account acc = new Account();
+            {
+                acc.AccountId = Convert.ToInt32(reader["account_id"]);
+                acc.UserId = Convert.ToInt32(reader["user_id"]);
+                acc.Balance = Convert.ToDecimal(reader["balance"]);
+            }
+            return acc;
+        }
+
+        public Account GetAccount(int userId)
         {
             Account returnAcc = null;
 
@@ -48,22 +59,8 @@ namespace TenmoServer.DAO
                 Console.WriteLine(theseHands.Message);
             }
 
-            return returnAcc.Balance;
-
+            return returnAcc;
         }
-
-        public Account GetAccountFromReader(SqlDataReader reader)
-        {
-            Account acc = new Account();
-            {
-                acc.AccountId = Convert.ToInt32(reader["account_id"]);
-                acc.UserId = Convert.ToInt32(reader["user_id"]);
-                acc.Balance = Convert.ToDecimal(reader["balance"]);
-            }
-            return acc;
-        }
-
-
     }
     //DANGER ZONE
 }

@@ -39,40 +39,38 @@ namespace TenmoServer.DAO
             return listOfUsers;
         }
 
-        public void Transaction(int fromUserId, int toUserId, decimal amount)
+        public bool transfer(int fromUserId, int toUserId, decimal amount)
         {
             try
             {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string Sql = "Begin Transaction; " +
+                        "UPDATE accounts SET balance = balance - @amount " +
+                        "WHERE user_id = @fromUserId; " +
+                        "UPDATE accounts SET balance = balance + @amount " +
+                        "WHERE user_id = @toUserId; " + 
+                        "COMMIT;";
+                    SqlCommand cmd = new SqlCommand(Sql, conn);
+                    cmd.Parameters.AddWithValue("@amount", amount);
+                    cmd.Parameters.AddWithValue("@fromUserId", fromUserId);
+                    cmd.Parameters.AddWithValue("@toUserId", toUserId);
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
-                string sql = "Begin Transaction; " +
-                             "UPDATE accounts " +
-                             "SET balance = balance - @amount " +
-                             "WHERE user_id = @fromUserId; " +
+                    int rowsAffected = cmd.ExecuteNonQuery();
 
-                             "UPDATE accounts " +
-                             "SET balance = balance + @amount " +
-                             "WHERE user_id = @toUserId; " +
-                             "COMMIT;";
-                SqlCommand cmd = new SqlCommand(sql, conn);
-
-                cmd.Parameters.AddWithValue("@fromUserId", fromUserId);
-                cmd.Parameters.AddWithValue("@toUserId", toUserId);
-                cmd.Parameters.AddWithValue("@amount", amount);
+                    //If 0 rows were affected, this will fail and return false
+                    return (rowsAffected > 0);
+                }             
             }
-
-            }
-            catch (Exception theseHands)
+            catch (Exception)
             {
-
-                Console.WriteLine(theseHands.Message);
+                throw;
             }
         }
 
-        //poplating transfer table
-        public Transfer createTransferReceipt(Transfer transfer)
+        //populating transfer table
+        public TransferRequest createTransferReceipt(TransferRequest transferRequest)
         {
             
             try
@@ -82,16 +80,16 @@ namespace TenmoServer.DAO
                     conn.Open();
                     string sql = "INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
                                  "OUTPUT INSERTED.transfer_id " +
-                                 "VALUES (transfer_type_id, @transfer_status_id, @account_from, @account_to, @amount );";
+                                 "VALUES (@transfer_type_id, @transfer_status_id, @account_from, @account_to, @amount);";
                     SqlCommand cmd = new SqlCommand(sql, conn);
                    
-                    cmd.Parameters.AddWithValue("@transfer_status_id", transfer.TransferStatusId);
-                    cmd.Parameters.AddWithValue("transfer_type_id", transfer.TransferTypeId);
-                    cmd.Parameters.AddWithValue(" @account_from", transfer.AccountFrom);
-                    cmd.Parameters.AddWithValue("@account_to", transfer.AccountTo);
-                    cmd.Parameters.AddWithValue("@amount", transfer.Amount);
+                    cmd.Parameters.AddWithValue("@transfer_status_id", transferRequest.TransferStatusId);
+                    cmd.Parameters.AddWithValue("@transfer_type_id", transferRequest.TransferTypeId);
+                    cmd.Parameters.AddWithValue("@account_from", transferRequest.AccountFrom);
+                    cmd.Parameters.AddWithValue("@account_to", transferRequest.AccountTo);
+                    cmd.Parameters.AddWithValue("@amount", transferRequest.Amount);
 
-                    transfer.TransferId = Convert.ToInt32(cmd.ExecuteScalar());
+                    transferRequest.TransferId = Convert.ToInt32(cmd.ExecuteScalar());
 
                 }
             }
@@ -101,7 +99,7 @@ namespace TenmoServer.DAO
                 throw;
             }
 
-            return transfer;
+            return transferRequest;
         }
 
         public User GetUserFromReader(SqlDataReader reader)

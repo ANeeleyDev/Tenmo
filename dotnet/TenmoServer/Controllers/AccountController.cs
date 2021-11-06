@@ -23,8 +23,8 @@ namespace TenmoServer.Controllers
             string userIdString = User.FindFirst("sub")?.Value;
             userId = Convert.ToInt32(userIdString);
 
-            decimal accBalance = accountDao.GetBalance(userId);
-            return accBalance;
+            Account acc = accountDao.GetAccount(userId);
+            return acc.Balance;
         }
 
 
