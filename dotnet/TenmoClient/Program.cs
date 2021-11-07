@@ -145,8 +145,6 @@ namespace TenmoClient
                     transferRequest.UserTo = usersChoiceInt;
                     transferRequest.AccountFrom = apiService.GetAccountId(userId);
                     transferRequest.AccountTo = apiService.GetAccountId(usersChoiceInt);
-                    transferRequest.TransferStatusId = 2;
-                    transferRequest.TransferTypeId = 2;
                    
                     apiService.CreateTransaction(transferRequest);
                 }

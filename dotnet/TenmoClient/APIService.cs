@@ -15,9 +15,9 @@ namespace TenmoClient
 
         public int GetAccountId(int userId)
         {
-            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
-            RestRequest request = new RestRequest(API_URL + "account");
-            IRestResponse<Account> response = client.Get<Account>(request);
+            //client.Authenticator = new JwtAuthenticator(UserService.GetToken());
+            RestRequest request = new RestRequest(API_URL + "account/" + userId);
+            IRestResponse<int> response = client.Get<int>(request);
 
             if (response.ResponseStatus != ResponseStatus.Completed)
             {
@@ -29,7 +29,7 @@ namespace TenmoClient
             }
             else
             {
-                return response.Data.AccountId;
+                return response.Data;
             }
 
         }
@@ -77,9 +77,9 @@ namespace TenmoClient
         
         public void CreateTransaction(TransferRequest transferRequest)
         {
-            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
+            //client.Authenticator = new JwtAuthenticator(UserService.GetToken());
             RestRequest request = new RestRequest(API_URL + "transfer");
-            IRestResponse<TransferRequest> response = client.Post<TransferRequest>(request);
+            IRestResponse response = client.Post(request);
 
             if (response.ResponseStatus != ResponseStatus.Completed)
             {

@@ -12,6 +12,7 @@ namespace TenmoServer.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class AccountController : ControllerBase
     {
         //Properties
@@ -27,14 +28,18 @@ namespace TenmoServer.Controllers
             return acc.Balance;
         }
 
-        [HttpGet]
-        public Account GetAccount(int userId)
+        [HttpGet("{userId}")]
+        [AllowAnonymous]
+        public int GetAccountId(int userId)
         {
-            string userIdString = User.FindFirst("sub")?.Value;
-            userId = Convert.ToInt32(userIdString);
+            //Account acc = new Account();
+            //string userIdString = User.FindFirst("sub")?.Value;
+            //userId = Convert.ToInt32(userIdString);
+
+            //Account userIdString = acc.UserId;
 
             Account acc = accountDao.GetAccount(userId);
-            return acc;
+            return acc.AccountId;
         }
 
 
