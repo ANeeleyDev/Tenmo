@@ -79,6 +79,7 @@ namespace TenmoClient
         {
             //client.Authenticator = new JwtAuthenticator(UserService.GetToken());
             RestRequest request = new RestRequest(API_URL + "transfer");
+            request.AddJsonBody(transferRequest);
             IRestResponse response = client.Post(request);
 
             if (response.ResponseStatus != ResponseStatus.Completed)
@@ -92,6 +93,23 @@ namespace TenmoClient
 
             Console.WriteLine("Everything works I think?");
 
+        }
+
+        public IList<TransferReceipt> GetTransfersForLoggedInUser(int accountId)
+        {
+            RestRequest request = new RestRequest(API_URL + "transfer/history");
+            IRestResponse<IList<TransferReceipt>> response = client.Get<IList<TransferReceipt>>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                throw new Exception("Error occurred - unable to reach server.", response.ErrorException);
+            }
+            else if (!response.IsSuccessful)
+            {
+                throw new Exception("Error occurred - received non-success response: $" + (int)response.StatusCode);
+            }
+
+            return response.Data;
         }
 
 

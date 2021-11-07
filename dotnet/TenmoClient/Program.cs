@@ -98,7 +98,15 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 2)
                 {
+                    Console.WriteLine("--------------------------------");
+                    Console.WriteLine("Tansfers");
+                    Console.WriteLine("ID     From/To     Amount");
+                    Console.WriteLine("--------------------------------");
 
+                    foreach (TransferReceipt item in trans)
+                    {
+
+                    }
                 }
                 else if (menuSelection == 3)
                 {
@@ -145,8 +153,20 @@ namespace TenmoClient
                     transferRequest.UserTo = usersChoiceInt;
                     transferRequest.AccountFrom = apiService.GetAccountId(userId);
                     transferRequest.AccountTo = apiService.GetAccountId(usersChoiceInt);
-                   
-                    apiService.CreateTransaction(transferRequest);
+                    if (transferRequest.Amount < 0)
+                    {
+                        Console.WriteLine("Can't tranfer negative moneies");
+
+                    }
+                    else if (apiService.GetBalance(transferRequest.UserFrom) < transferRequest.Amount)
+                    {
+                        Console.WriteLine("You are too poor");
+                    }
+                    else
+                    {
+                        apiService.CreateTransaction(transferRequest);
+                    }
+
                 }
                 else if (menuSelection == 5)
                 {

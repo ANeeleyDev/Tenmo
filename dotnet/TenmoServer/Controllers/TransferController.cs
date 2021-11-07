@@ -44,11 +44,23 @@ namespace TenmoServer.Controllers
             //defining the parameters we need to call on our Dao method for a transfer.
             int toUserId = transferRequest.UserTo;
             decimal amount = transferRequest.Amount;
-
+           
             transferDao.transfer(fromUserId, toUserId, amount);
 
             transferDao.createTransferReceipt(transferRequest);         
             
+        }
+
+        [HttpGet("history")]
+        public IList<TransferReceipt> GetTransfers(int accountId)
+        {
+            string userIdString = User.FindFirst("sub")?.Value;
+            int fromUserId = Convert.ToInt32(userIdString);
+
+            Account userAccount = accountDao.GetAccount(fromUserId);
+            accountId = userAccount.AccountId;
+
+            return transferDao.GetTransfersForLoggedInUser(accountId);
         }
 
         

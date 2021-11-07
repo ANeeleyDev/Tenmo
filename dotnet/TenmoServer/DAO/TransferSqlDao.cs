@@ -111,6 +111,43 @@ namespace TenmoServer.DAO
             return transferRequest;
         }
 
+
+        public IList<TransferReceipt> GetTransfersForLoggedInUser(int accountId)
+        {
+            IList<TransferReceipt> transferReceipts = new List<TransferReceipt>();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    string sql = "SELECT * " +
+                                 "FROM transfers " +
+                                 "WHERE account_from = @account_id OR account_to = @account_id;";
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+
+                    cmd.Parameters.AddWithValue("@account_id", accountId);
+                    
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        TransferReceipt transfer = GetTransferFromReader(reader);
+                        transferReceipts.Add(transfer);
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return transferReceipts;
+        }
+
         //Reader helper for our get user.
         public User GetUserFromReader(SqlDataReader reader)
         {
@@ -123,18 +160,19 @@ namespace TenmoServer.DAO
             return user;
         }
 
-        ////Reader helper for our transfer.
-        //public Transfer GetTransferFromReader(SqlDataReader reader)
-        //{
-        //    Transfer transfer = new Transfer();
-        //    transfer.TransferId = Convert.ToInt32(reader["transfer_id"]);
-        //    transfer.TransferTypeId = Convert.ToInt32(reader["transfer_type_id"]);
-        //    transfer.TransferStatusId = Convert.ToInt32(reader["transfer_status_id"]);
-        //    transfer.AccountFrom = Convert.ToInt32(reader["account_from"]);
-        //    transfer.AccountTo = Convert.ToInt32(reader["account_to"]);
-        //    transfer.Amount = Convert.ToDecimal(reader["amount"]);
+        //Reader helper for our transfer.
+        public TransferReceipt GetTransferFromReader(SqlDataReader reader)
+        {
+            TransferReceipt transferReceipt = new TransferReceipt();
+            transferReceipt.TransferId = Convert.ToInt32(reader["transfer_id"]);
+            transferReceipt.TransferTypeId = Convert.ToInt32(reader["transfer_type_id"]);
+            transferReceipt.TransferStatusId = Convert.ToInt32(reader["transfer_status_id"]);
+            transferReceipt.AccountFrom = Convert.ToInt32(reader["account_from"]);
+            transferReceipt.AccountTo = Convert.ToInt32(reader["account_to"]);
+            transferReceipt.Amount = Convert.ToDecimal(reader["amount"]);
 
-        //    return transfer;
-        //}
+            return transferReceipt;
+        }
     }
+    //DANGER ZONE
 }

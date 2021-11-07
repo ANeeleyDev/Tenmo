@@ -17,5 +17,7 @@ namespace TenmoServer.DAO
 
         //populating the transfer table
         public TransferRequest createTransferReceipt(TransferRequest transferRequest);
+
+        public IList<TransferReceipt> GetTransfersForLoggedInUser(int accountId);
     }
 }
