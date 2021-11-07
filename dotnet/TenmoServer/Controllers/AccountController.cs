@@ -27,6 +27,15 @@ namespace TenmoServer.Controllers
             return acc.Balance;
         }
 
+        [HttpGet]
+        public Account GetAccount(int userId)
+        {
+            string userIdString = User.FindFirst("sub")?.Value;
+            userId = Convert.ToInt32(userIdString);
+
+            Account acc = accountDao.GetAccount(userId);
+            return acc;
+        }
 
 
 

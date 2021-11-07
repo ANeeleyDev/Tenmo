@@ -106,6 +106,8 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 4)
                 {
+                    int userId = UserService.GetUserId();
+
                     Console.WriteLine();
                     IList<User> usersList = apiService.GetUsers();
 
@@ -133,7 +135,20 @@ namespace TenmoClient
                             //do whatever
                         }
                     }
+                    string userChoiceAmountAsString = Console.ReadLine();
+                    int userChoiceAmountAsInt = int.Parse(userChoiceAmountAsString);
 
+                    TransferRequest transferRequest = new TransferRequest();
+
+                    transferRequest.Amount = userChoiceAmountAsInt;
+                    transferRequest.UserFrom = userId;
+                    transferRequest.UserTo = usersChoiceInt;
+                    transferRequest.AccountFrom = apiService.GetAccountId(userId);
+                    transferRequest.AccountTo = apiService.GetAccountId(usersChoiceInt);
+                    transferRequest.TransferStatusId = 2;
+                    transferRequest.TransferTypeId = 2;
+                   
+                    apiService.CreateTransaction(transferRequest);
                 }
                 else if (menuSelection == 5)
                 {

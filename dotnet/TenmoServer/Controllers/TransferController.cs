@@ -27,34 +27,31 @@ namespace TenmoServer.Controllers
 
         //Method case 2
         [HttpPost]
-        public ActionResult CreateTransaction(TransferRequest transferRequest)
+        public void CreateTransaction(TransferRequest transferRequest)
         {
             //Getting current logged in user's ID
             string userIdString = User.FindFirst("sub")?.Value;
             int fromUserId = Convert.ToInt32(userIdString);
 
+            //these two lines are getting the whole account and assigning it to that variable
             Account fromAccount = accountDao.GetAccount(transferRequest.UserFrom);
             Account toAccount = accountDao.GetAccount(transferRequest.UserTo);
 
+            //These two lines are asigning the account id.
             transferRequest.AccountFrom = fromAccount.AccountId;
             transferRequest.AccountTo = toAccount.AccountId;
 
+            //defining the parameters we need to call on our Dao method for a transfer.
             int toUserId = transferRequest.UserTo;
             decimal amount = transferRequest.Amount;
 
             transferDao.transfer(fromUserId, toUserId, amount);
 
             transferDao.createTransferReceipt(transferRequest);         
-
-
-            return Ok();
+            
         }
 
-        //[HttpPost("sendMoney")]
-        //public ActionResult<Transfer> CreateTransactionReceipt(Transfer transfer)
-        //{
-        //    return transferDao.createTransferReceipt(transfer);
-        //}
+        
 
         //CTOR
         public TransferController(ITransferDao _transferDao, IAccountDao accountDao)

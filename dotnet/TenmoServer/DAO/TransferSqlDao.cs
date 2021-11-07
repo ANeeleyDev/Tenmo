@@ -39,6 +39,11 @@ namespace TenmoServer.DAO
             return listOfUsers;
         }
 
+        //creates and begins a transfer from both userFrom and UserTo within a transaction block.
+        //the parameter amount is used both for users sice this is a transaction happens to both of them. The only difference is
+        //that one is adding while the other is subtracting that value from their balance.
+        //This math only happens on both accounts if both can be done all at once.
+        //return type is bool because we just want to confirm that this method worked or not for testing.
         public bool transfer(int fromUserId, int toUserId, decimal amount)
         {
             try
@@ -46,17 +51,19 @@ namespace TenmoServer.DAO
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
-                    string Sql = "Begin Transaction; " +
-                        "UPDATE accounts SET balance = balance - @amount " +
-                        "WHERE user_id = @fromUserId; " +
-                        "UPDATE accounts SET balance = balance + @amount " +
-                        "WHERE user_id = @toUserId; " + 
-                        "COMMIT;";
-                    SqlCommand cmd = new SqlCommand(Sql, conn);
+                    string sql = "Begin Transaction; " +
+                                 "UPDATE accounts SET balance = balance - @amount " +
+                                 "WHERE user_id = @fromUserId; " +
+
+                                 "UPDATE accounts SET balance = balance + @amount " +
+                                 "WHERE user_id = @toUserId; " + 
+                                 "COMMIT;";
+                    SqlCommand cmd = new SqlCommand(sql, conn);
                     cmd.Parameters.AddWithValue("@amount", amount);
                     cmd.Parameters.AddWithValue("@fromUserId", fromUserId);
                     cmd.Parameters.AddWithValue("@toUserId", toUserId);
 
+                    //Tells it to do what we have in our Sql string.
                     int rowsAffected = cmd.ExecuteNonQuery();
 
                     //If 0 rows were affected, this will fail and return false
@@ -70,6 +77,7 @@ namespace TenmoServer.DAO
         }
 
         //populating transfer table
+        //our parameter is a type TransferRequest so we can call on everything that it holds such as account and user info.
         public TransferRequest createTransferReceipt(TransferRequest transferRequest)
         {
             
@@ -83,19 +91,12 @@ namespace TenmoServer.DAO
                                  "VALUES (@transfer_type_id, @transfer_status_id, @account_from, @account_to, @amount);";
                     SqlCommand cmd = new SqlCommand(sql, conn);
                    
-<<<<<<< HEAD
+
                     cmd.Parameters.AddWithValue("@transfer_status_id", transferRequest.TransferStatusId);
                     cmd.Parameters.AddWithValue("@transfer_type_id", transferRequest.TransferTypeId);
                     cmd.Parameters.AddWithValue("@account_from", transferRequest.AccountFrom);
                     cmd.Parameters.AddWithValue("@account_to", transferRequest.AccountTo);
                     cmd.Parameters.AddWithValue("@amount", transferRequest.Amount);
-=======
-                    cmd.Parameters.AddWithValue("@transfer_status_id", transfer.TransferStatusId);
-                    cmd.Parameters.AddWithValue("@transfer_type_id", transfer.TransferTypeId);
-                    cmd.Parameters.AddWithValue("@account_from", transfer.AccountFrom);
-                    cmd.Parameters.AddWithValue("@account_to", transfer.AccountTo);
-                    cmd.Parameters.AddWithValue("@amount", transfer.Amount);
->>>>>>> 806fb63e2432ad53ac9018dd8c7221beba90ff56
 
                     transferRequest.TransferId = Convert.ToInt32(cmd.ExecuteScalar());
 
@@ -110,6 +111,7 @@ namespace TenmoServer.DAO
             return transferRequest;
         }
 
+        //Reader helper for our get user.
         public User GetUserFromReader(SqlDataReader reader)
         {
             User user = new User();
@@ -121,17 +123,18 @@ namespace TenmoServer.DAO
             return user;
         }
 
-        public Transfer GetTransferFromReader(SqlDataReader reader)
-        {
-            Transfer transfer = new Transfer();
-            transfer.TransferId = Convert.ToInt32(reader["transfer_id"]);
-            transfer.TransferTypeId = Convert.ToInt32(reader["transfer_type_id"]);
-            transfer.TransferStatusId = Convert.ToInt32(reader["transfer_status_id"]);
-            transfer.AccountFrom = Convert.ToInt32(reader["account_from"]);
-            transfer.AccountTo = Convert.ToInt32(reader["account_to"]);
-            transfer.Amount = Convert.ToDecimal(reader["amount"]);
+        ////Reader helper for our transfer.
+        //public Transfer GetTransferFromReader(SqlDataReader reader)
+        //{
+        //    Transfer transfer = new Transfer();
+        //    transfer.TransferId = Convert.ToInt32(reader["transfer_id"]);
+        //    transfer.TransferTypeId = Convert.ToInt32(reader["transfer_type_id"]);
+        //    transfer.TransferStatusId = Convert.ToInt32(reader["transfer_status_id"]);
+        //    transfer.AccountFrom = Convert.ToInt32(reader["account_from"]);
+        //    transfer.AccountTo = Convert.ToInt32(reader["account_to"]);
+        //    transfer.Amount = Convert.ToDecimal(reader["amount"]);
 
-            return transfer;
-        }
+        //    return transfer;
+        //}
     }
 }
