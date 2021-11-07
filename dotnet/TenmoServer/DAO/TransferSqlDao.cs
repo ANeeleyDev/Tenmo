@@ -83,11 +83,19 @@ namespace TenmoServer.DAO
                                  "VALUES (@transfer_type_id, @transfer_status_id, @account_from, @account_to, @amount);";
                     SqlCommand cmd = new SqlCommand(sql, conn);
                    
+<<<<<<< HEAD
                     cmd.Parameters.AddWithValue("@transfer_status_id", transferRequest.TransferStatusId);
                     cmd.Parameters.AddWithValue("@transfer_type_id", transferRequest.TransferTypeId);
                     cmd.Parameters.AddWithValue("@account_from", transferRequest.AccountFrom);
                     cmd.Parameters.AddWithValue("@account_to", transferRequest.AccountTo);
                     cmd.Parameters.AddWithValue("@amount", transferRequest.Amount);
+=======
+                    cmd.Parameters.AddWithValue("@transfer_status_id", transfer.TransferStatusId);
+                    cmd.Parameters.AddWithValue("@transfer_type_id", transfer.TransferTypeId);
+                    cmd.Parameters.AddWithValue("@account_from", transfer.AccountFrom);
+                    cmd.Parameters.AddWithValue("@account_to", transfer.AccountTo);
+                    cmd.Parameters.AddWithValue("@amount", transfer.Amount);
+>>>>>>> 806fb63e2432ad53ac9018dd8c7221beba90ff56
 
                     transferRequest.TransferId = Convert.ToInt32(cmd.ExecuteScalar());
 
