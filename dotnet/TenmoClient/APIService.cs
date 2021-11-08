@@ -97,7 +97,8 @@ namespace TenmoClient
 
         public IList<TransferReceipt> GetTransfersForLoggedInUser(int accountId)
         {
-            RestRequest request = new RestRequest(API_URL + "transfer/history");
+            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
+            RestRequest request = new RestRequest(API_URL + "transfer/history/" + accountId);
             IRestResponse<IList<TransferReceipt>> response = client.Get<IList<TransferReceipt>>(request);
 
             if (response.ResponseStatus != ResponseStatus.Completed)
@@ -112,6 +113,45 @@ namespace TenmoClient
             return response.Data;
         }
 
+        public string GetTransferFrom(int transferId)
+        {
+            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
+            RestRequest request = new RestRequest(API_URL + "transfer/history/from/" + transferId);
+            IRestResponse response = client.Get<string>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                throw new Exception("Error occurred - unable to reach server.", response.ErrorException);
+            }
+            else if (!response.IsSuccessful)
+            {
+                throw new Exception("Error occurred - received non-success response: $" + (int)response.StatusCode);
+            }
+
+            //string userNameFrom = Convert.ToBase64String(response;
+
+            return response.Content;
+        }
+
+        public string GetTransferTo(int transferId)
+        {
+            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
+            RestRequest request = new RestRequest(API_URL + "transfer/history/to/" + transferId);
+            IRestResponse response = client.Get<string>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                throw new Exception("Error occurred - unable to reach server.", response.ErrorException);
+            }
+            else if (!response.IsSuccessful)
+            {
+                throw new Exception("Error occurred - received non-success response: $" + (int)response.StatusCode);
+            }
+
+            //string userNameTo = Convert.ToString(response);
+
+            return response.Content;
+        }
 
         //CTOR
         public APIService(string api_url)

@@ -13,11 +13,17 @@ namespace TenmoServer.DAO
 
         //Method case 2
         public bool transfer(int fromUserId, int toUserId, decimal amount);
-        //getAccountId allows us to populate the transfer table with the account id
+       
+
 
         //populating the transfer table
         public TransferRequest createTransferReceipt(TransferRequest transferRequest);
 
         public IList<TransferReceipt> GetTransfersForLoggedInUser(int accountId);
+
+        public string GetUserNameFrom(int transferId);
+
+        public string GetUserNameTo(int transferId);
     }
+
 }

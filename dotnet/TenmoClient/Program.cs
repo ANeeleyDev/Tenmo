@@ -103,10 +103,60 @@ namespace TenmoClient
                     Console.WriteLine("ID     From/To     Amount");
                     Console.WriteLine("--------------------------------");
 
-                    foreach (TransferReceipt item in trans)
+                    int currentUser = UserService.GetUserId();
+                    int accountId = apiService.GetAccountId(currentUser);
+
+                    IList<TransferReceipt> transferReceipts = apiService.GetTransfersForLoggedInUser(accountId);
+                    foreach (TransferReceipt item in transferReceipts)
                     {
+                        if (accountId == item.AccountTo)
+                        {
+                            string userName = apiService.GetTransferFrom(item.TransferId);
+                            Console.WriteLine($"{item.TransferId}     From: {userName}     {item.Amount}");
+                        }
+                        else
+                        {
+                            string userName = apiService.GetTransferTo(item.TransferId);
+                            Console.WriteLine($"{item.TransferId}     To: {userName}     {item.Amount}");
+                        }
 
                     }
+                    Console.WriteLine("Please enter transfer ID to view details (0 to cancel): ");
+                    Console.WriteLine();
+
+                    string userInputForDetailsAsString = Console.ReadLine();
+                    int userInputForDetailsAsInt = Convert.ToInt32(userInputForDetailsAsString);
+
+                    string userFrom = apiService.GetTransferFrom(userInputForDetailsAsInt);
+                    string userTo = apiService.GetTransferTo(userInputForDetailsAsInt);
+                    TransferRequest transfer = new TransferRequest();
+                    foreach (TransferReceipt item in transferReceipts)
+                    {
+
+                        if (item.TransferId == userInputForDetailsAsInt)
+                        {
+                            transfer.Amount = item.Amount;
+
+                        }
+                        else
+                        {
+                            return;
+                        }
+
+
+
+                    }
+
+                    Console.WriteLine("--------------------------------");
+                    Console.WriteLine("Transfer Details");
+                    Console.WriteLine("--------------------------------");
+                    Console.WriteLine($"ID: {userInputForDetailsAsInt}");
+                    Console.WriteLine($"From: {userFrom}");
+                    Console.WriteLine($"To: {userTo}");
+                    Console.WriteLine($"Type: Send");
+                    Console.WriteLine($"Status: Approved");
+                    Console.WriteLine($"Amount: {transfer.Amount}");
+
                 }
                 else if (menuSelection == 3)
                 {

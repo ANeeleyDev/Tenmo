@@ -12,6 +12,7 @@ namespace TenmoServer.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class TransferController : ControllerBase
     {
         //Properties
@@ -44,14 +45,15 @@ namespace TenmoServer.Controllers
             //defining the parameters we need to call on our Dao method for a transfer.
             int toUserId = transferRequest.UserTo;
             decimal amount = transferRequest.Amount;
-           
+
             transferDao.transfer(fromUserId, toUserId, amount);
 
-            transferDao.createTransferReceipt(transferRequest);         
-            
+            transferDao.createTransferReceipt(transferRequest);
+
         }
 
-        [HttpGet("history")]
+        [HttpGet("history/{accountId}")]
+        [AllowAnonymous]
         public IList<TransferReceipt> GetTransfers(int accountId)
         {
             string userIdString = User.FindFirst("sub")?.Value;
@@ -63,7 +65,19 @@ namespace TenmoServer.Controllers
             return transferDao.GetTransfersForLoggedInUser(accountId);
         }
 
-        
+        [HttpGet("history/from/{transferId}")]
+        public string GetUserNameFrom(int transferId)
+        {
+            return transferDao.GetUserNameFrom(transferId);
+        }
+
+        [HttpGet("history/to/{transferId}")]
+        public string GetUserNameTo(int transferId)
+        {
+            return transferDao.GetUserNameTo(transferId);
+        }
+
+
 
         //CTOR
         public TransferController(ITransferDao _transferDao, IAccountDao accountDao)

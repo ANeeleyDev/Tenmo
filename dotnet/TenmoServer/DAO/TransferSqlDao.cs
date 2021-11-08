@@ -148,6 +148,72 @@ namespace TenmoServer.DAO
             return transferReceipts;
         }
 
+        public string GetUserNameFrom(int transferId)
+        {
+            string userNameFrom = null;
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string sql = "SELECT u.username FROM users u " +
+                                 "JOIN accounts a ON u.user_id = a.user_id " +
+                                 "JOIN transfers t ON a.account_id = t.account_from " +
+                                 "WHERE transfer_id = @transferId;";
+
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@transferId", transferId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                         userNameFrom = Convert.ToString(reader["username"]);
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return userNameFrom;
+        }
+
+        public string GetUserNameTo(int transferId)
+        {
+            string userNameTo = null;
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string sql = "SELECT u.username FROM users u " +
+                                 "JOIN accounts a ON u.user_id = a.user_id " +
+                                 "JOIN transfers t ON a.account_id = t.account_to " +
+                                 "WHERE transfer_id = @transferId;";
+
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@transferId", transferId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        userNameTo = Convert.ToString(reader["username"]);
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return userNameTo; 
+        }
+
         //Reader helper for our get user.
         public User GetUserFromReader(SqlDataReader reader)
         {
@@ -159,6 +225,7 @@ namespace TenmoServer.DAO
 
             return user;
         }
+
 
         //Reader helper for our transfer.
         public TransferReceipt GetTransferFromReader(SqlDataReader reader)
@@ -173,6 +240,7 @@ namespace TenmoServer.DAO
 
             return transferReceipt;
         }
+
     }
     //DANGER ZONE
 }
